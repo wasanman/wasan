@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:wasan/utility/my_style.dart';
@@ -45,6 +46,7 @@ class _RegisterState extends State<Register> {
     return Container(
       padding: EdgeInsets.only(left: 30.0, right: 30.0),
       child: TextField(
+          keyboardType: TextInputType.emailAddress,
           onChanged: (String string) {
             email = string.trim();
           },
@@ -157,9 +159,24 @@ class _RegisterState extends State<Register> {
             password == null ||
             password.isEmpty) {
           normalDialog(context, 'Have Space', 'Please Fill Every Blank');
-        } else {}
+        } else {
+          registerFirebase();
+        }
       },
     );
+  }
+
+  Future<void> registerFirebase() async {
+    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    await firebaseAuth
+        .createUserWithEmailAndPassword(email: email, password: password)
+        .then((response) {
+      print('Register Success');
+    }).catchError((error) {
+      String title = error.code;
+      String message = error.message;
+      normalDialog(context, title, message);
+    });
   }
 
   @override
