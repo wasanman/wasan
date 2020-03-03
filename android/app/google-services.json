@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "472411848092",
+    "firebase_url": "https://wasan-36689.firebaseio.com",
+    "project_id": "wasan-36689",
+    "storage_bucket": "wasan-36689.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:472411848092:android:d53f34ce0839d9c8481c59",
+        "android_client_info": {
+          "package_name": "com.wasanman.wasan"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "472411848092-9rvvtub3c7612jsvu59s8u56cc2t356r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUoihcsHMxi_GpR6hiy19NJZ4bgGMOv-I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "472411848092-9rvvtub3c7612jsvu59s8u56cc2t356r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
