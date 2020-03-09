@@ -1,10 +1,13 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:wasan/utility/my_style.dart';
 import 'package:wasan/utility/normal_dialog.dart';
+import 'package:wasan/widget/my_service.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -14,7 +17,7 @@ class Register extends StatefulWidget {
 class _RegisterState extends State<Register> {
   // Field
   File file;
-  String name, email, password;
+  String name, email, password, urlPhoto;
 
   // Method
   Widget nameForm() {
@@ -172,10 +175,47 @@ class _RegisterState extends State<Register> {
         .createUserWithEmailAndPassword(email: email, password: password)
         .then((response) {
       print('Register Success');
+      uploadAvatar();
     }).catchError((error) {
       String title = error.code;
       String message = error.message;
       normalDialog(context, title, message);
+    });
+  }
+
+  Future<void> uploadAvatar() async {
+    FirebaseStorage firebaseStorage = FirebaseStorage.instance;
+
+    Random random = Random();
+    int randomNumber = random.nextInt(100000);
+
+    if (file != null) {
+      StorageReference storageReference =
+          firebaseStorage.ref().child('Avatar/avatar$randomNumber.jpg');
+      StorageUploadTask storageUploadTask = storageReference.putFile(file);
+
+      urlPhoto =
+          await (await storageUploadTask.onComplete).ref.getDownloadURL();
+      print('urlPhoto = $urlPhoto');
+
+      setupNameAnPhoto();
+    }
+  }
+
+  Future<void> setupNameAnPhoto() async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    FirebaseUser firebaseUser = await auth.currentUser();
+    UserUpdateInfo userUpdateInfo = UserUpdateInfo();
+    userUpdateInfo.displayName = name;
+    userUpdateInfo.photoUrl = urlPhoto;
+    firebaseUser.updateProfile(userUpdateInfo);
+
+    MaterialPageRoute route =
+        MaterialPageRoute(builder: (BuildContext buildContext) {
+      return MyService();
+    });
+    Navigator.of(context).pushAndRemoveUntil(route, (Route<dynamic> route) {
+      return false;
     });
   }
 

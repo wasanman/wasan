@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wasan/utility/my_style.dart';
+import 'package:wasan/widget/my_service.dart';
 import 'package:wasan/widget/register.dart';
 
 class Authen extends StatefulWidget {
@@ -9,11 +11,41 @@ class Authen extends StatefulWidget {
 }
 
 class _AuthenState extends State<Authen> {
-  @override
-
-  // Field sakjdf;asldjf;alsjd sladfalskdjfl;ksadjfl
+  // Field
+  bool status = true;
 
   // Method
+
+  @override
+  void initState() {
+    super.initState();
+    checkStatus();
+  }
+
+  Future<void> checkStatus() async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    FirebaseUser firebaseUser = await auth.currentUser();
+    if (firebaseUser != null) {
+      MaterialPageRoute route =
+          MaterialPageRoute(builder: (BuildContext buildContext) {
+        return MyService();
+      });
+      Navigator.of(context).pushAndRemoveUntil(route, (Route<dynamic> route) {
+        return false;
+      });
+    } else {
+      setState(() {
+        status = false;
+      });
+    }
+  }
+
+  Widget showProcess() {
+    return Center(
+      child: CircularProgressIndicator(),
+    );
+  }
+
   Widget mySizebox() {
     return SizedBox(
       width: 5.0,
@@ -111,25 +143,29 @@ class _AuthenState extends State<Authen> {
 
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: RadialGradient(
-            colors: <Color>[Colors.white, MyStyle().primaryColor],
-            radius: 1.0,
-          ),
+      body: status ? showProcess() : mainContent(),
+    );
+  }
+
+  Container mainContent() {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: RadialGradient(
+          colors: <Color>[Colors.white, MyStyle().primaryColor],
+          radius: 1.0,
         ),
-        child: Center(
-            child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            showLogo(),
-            showAppName(),
-            userForm(),
-            passwordForm(),
-            showButton(),
-          ],
-        )),
       ),
+      child: Center(
+          child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          showLogo(),
+          showAppName(),
+          userForm(),
+          passwordForm(),
+          showButton(),
+        ],
+      )),
     );
   }
 }
