@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:wasan/models/product_model.dart';
 
 class ShowListProduct extends StatefulWidget {
   @override
@@ -9,6 +10,7 @@ class ShowListProduct extends StatefulWidget {
 class _ShowListProductState extends State<ShowListProduct> {
   // Field
   String urlAPI = 'http://jsonplaceholder.typicode.com/photos';
+  List<ProductModel> productModels = List();
 
   // Method
   @override
@@ -19,16 +21,34 @@ class _ShowListProductState extends State<ShowListProduct> {
 
   Future<void> readJSON() async {
     try {
-      
       Response response = await Dio().get(urlAPI);
       print('response = $response');
 
-    } catch (e) {
-    }
+      for (var map in response.data) {
+        ProductModel model = ProductModel.fromJson(map);
+        setState(() {
+          productModels.add(model);
+        });
+      }
+    } catch (e) {}
+  }
+
+  Widget showProcess() {
+    return Center(
+      child: CircularProgressIndicator(),
+    );
+  }
+
+  Widget showListView() {
+    return ListView.builder(
+        itemCount: productModels.length,
+        itemBuilder: (BuildContext buildContext, int index) {
+          return Text(productModels[index].title);
+        });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Text('This is List Product');
+    return productModels.length == 0 ? showProcess() : showListView();
   }
 }
